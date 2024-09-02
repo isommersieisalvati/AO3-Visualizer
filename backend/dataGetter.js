@@ -1,28 +1,16 @@
 import { JSDOM } from "jsdom";
+import fetch from "node-fetch";
 
 async function getPages(url) {
     try {
-        const response = await fetch(
-            url
+        const text = await fetch(url);
+        const html = await text.text();
+        const doc = new JSDOM(html)
+            .window.document;
+
+        const pages = doc.querySelector(
+            "ol.pagination.actions"
         );
-        const text =
-            await response.text();
-
-        const dom = new JSDOM(text);
-        const document =
-            dom.window.document;
-
-        let workPage =
-            document.createElement(
-                "html"
-            );
-
-        workPage.innerHTML = text;
-
-        const pages =
-            workPage.querySelector(
-                "ol.pagination.actions"
-            );
 
         if (!pages) {
             return 1;
@@ -76,45 +64,39 @@ function getFicInfo(work) {
     ];
 }
 
-async function getStatistics(url) {
+export async function getStatistics(
+    url
+) {
     try {
         const lastPage = await getPages(
             url
         );
         const works = [];
-
         for (
             let i = 1;
             i <= lastPage;
             i++
         ) {
             const pageUrl = `${url}?page=${i}`;
-            const response =
-                await fetch(pageUrl);
-            const text =
-                await response.text();
-
-            const dom = new JSDOM(text);
-            const doc =
-                dom.window.document;
-
+            const text = await fetch(
+                pageUrl
+            );
+            const html =
+                await text.text();
+            const doc = new JSDOM(html)
+                .window.document;
             const workItems =
                 doc.querySelectorAll(
                     "ol.work.index.group > li"
                 );
-
             workItems.forEach(
                 (work) => {
                     works.push(
                         getFicInfo(work)
                     );
-                    console.log(
-                        getFicInfo(work)
-                    );
                 }
             );
         }
-
         return works;
     } catch (error) {
         console.error(
@@ -124,8 +106,3 @@ async function getStatistics(url) {
         return null;
     }
 }
-
-// Example usage
-const url =
-    "https://archiveofourown.org/users/arriviste/works"; // Replace with your URL
-getStatistics(url);
