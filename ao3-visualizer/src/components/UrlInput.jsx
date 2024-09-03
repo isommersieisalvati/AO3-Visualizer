@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { getStatistics } from "../utils/dataGetter"; // Adjust the import path as needed
+import axios from "axios";
 
 const UrlInput = () => {
     const [url, setUrl] = useState("");
@@ -8,24 +8,24 @@ const UrlInput = () => {
         e.preventDefault();
         if (url) {
             try {
-                const data =
-                    await getStatistics(
-                        url
+                await axios
+                    .post(
+                        "http://localhost:3001/work-page-url",
+                        { url }
+                    )
+                    .then(
+                        (response) => {
+                            console.log(
+                                response
+                            );
+                        }
                     );
-                console.log(
-                    "Data received:",
-                    data
-                );
             } catch (error) {
                 console.error(
-                    "Error fetching data:",
+                    "Error creating data:",
                     error
                 );
             }
-        } else {
-            console.warn(
-                "URL is required"
-            );
         }
     };
 

@@ -5,24 +5,20 @@ import { getStatistics } from "./dataGetter.js";
 const app = express();
 const port = 3001;
 
-const data = {};
-const url = "";
+let data = {};
+let url = "";
 
 // Middleware
 app.use(cors());
 app.use(express.json());
 
-app.get(
+app.post(
     "/work-page-url",
     async (req, res) => {
         try {
             // Fetch data from frontend API
-            const response =
-                await fetch(
-                    "http://localhost:3001/work-page-url"
-                );
-            url = await response.json();
-
+            const url = req.body.url;
+            console.log(url);
             res.json({
                 success: true,
                 data,
@@ -39,7 +35,23 @@ app.get(
 app.post(
     "/api/work-list",
     (req, res) => {
-        data = getStatistics(url);
+        data = getStatistics(
+            "https://archiveofourown.org/users/Ilsistemaperiodico/works"
+        );
+        try {
+            console.log(data);
+            res.json(data);
+        } catch (error) {
+            res.status(500).json({
+                error: "Failed to process data",
+            });
+        }
+    }
+);
+
+app.get(
+    "/api/work-list",
+    (req, res) => {
         try {
             res.json(data);
         } catch (error) {
