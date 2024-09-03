@@ -27,6 +27,12 @@ const UrlInput = () => {
                 );
             }
         }
+        try {
+            let data = await axios.get(
+                "http://localhost:3001/work-list"
+            );
+            console.log(data);
+        } catch (error) {}
     };
 
     return (
