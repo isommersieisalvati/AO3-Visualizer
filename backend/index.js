@@ -18,7 +18,6 @@ app.post(
         try {
             // Fetch data from frontend API
             url = req.body.url;
-            console.log(url);
             res.json({
                 success: true,
                 data,
@@ -32,20 +31,25 @@ app.post(
     }
 );
 
-app.get("/work-list", (req, res) => {
-    // data = getStatistics(url);
-    data = {
-        title: "Test Title",
-    };
-    try {
-        console.log(data);
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({
-            error: "Failed to process data",
-        });
+app.get(
+    "/work-list",
+    async (req, res) => {
+        try {
+            data = await getStatistics(
+                url
+            );
+            // data = {
+            //     title: "Test Title",
+            // };
+
+            res.json(data);
+        } catch (error) {
+            res.status(500).json({
+                error: "Failed to process data",
+            });
+        }
     }
-});
+);
 
 app.get(
     "/api/work-list",
