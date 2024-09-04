@@ -6,7 +6,7 @@ const app = express();
 const port = 3001;
 
 let data = {};
-let url;
+let currentUrl = "";
 
 // Middleware
 app.use(cors());
@@ -17,10 +17,11 @@ app.post(
     async (req, res) => {
         try {
             // Fetch data from frontend API
-            url = req.body.url;
+            const url = req.body.url;
+            currentUrl = url;
             console.log(url);
             data = await getStatistics(
-                url
+                currentUrl
             );
             // console.log(data);
             res.json({
@@ -57,15 +58,15 @@ app.get(
     }
 );
 
-app.get("/work-list", (req, res) => {
-    try {
-        res.json(data);
-    } catch (error) {
-        res.status(500).json({
-            error: "Failed to process data",
-        });
-    }
-});
+// app.get("/work-list", (req, res) => {
+//     try {
+//         res.json(data);
+//     } catch (error) {
+//         res.status(500).json({
+//             error: "Failed to process data",
+//         });
+//     }
+// });
 
 app.listen(port, async () => {
     console.log(

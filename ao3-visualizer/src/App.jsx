@@ -3,49 +3,75 @@ import React, {
     useEffect,
     useRef,
 } from "react";
-import UrlInput from "./components/UrlInput";
-import Heatmap from "./components/Heatmap";
+// import UrlInput from "./components/UrlInput";
+// import Heatmap from "./components/Heatmap";
 import "./App.css";
 import axios from "axios";
 
 function App() {
-    const [data, setData] =
-        useState(null);
-    const dataRef = useRef(data);
+    const [url, setUrl] = useState(""); // Data to send with POST
+    const [getList, setGetList] =
+        useState(null); // Data to display after GET
+    const [error, setError] =
+        useState(null); // Error handling
 
-    let response;
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                response = await axios
-                    .get(
-                        "http://localhost:3001/work-list"
-                    )
-                    .then();
-                setData(response.data);
-                console.log(
-                    dataRef.current
+        try {
+            // Step 1: Send data with POST request
+            const postResponse =
+                await axios.post(
+                    "http://localhost:3001/work-page-url",
+                    { url }
                 );
-            } catch (error) {
-                console.error(
-                    "Error fetching data:",
-                    error
-                );
-            }
-        };
+            console.log(
+                "POST Response:",
+                postResponse.data
+            );
 
-        fetchData();
-    }, [dataRef]);
+            setGetList(
+                postResponse.data
+            );
+        } catch (err) {
+            setError(err.message); // Handle errors
+        }
+    };
 
-    console.log("worklist", data);
+    console.log(getList);
 
     return (
-        <div className="App">
-            <h1>URL Fetcher</h1>
-            <UrlInput />
-
-            {/* <Heatmap list={data} /> */}
+        <div>
+            <form
+                onSubmit={handleSubmit}
+            >
+                <input
+                    type="text"
+                    value={url}
+                    onChange={(e) =>
+                        setUrl(
+                            e.target
+                                .value
+                        )
+                    }
+                    placeholder="Enter data"
+                />
+                <button type="submit">
+                    Submit
+                </button>
+            </form>
+            {error && (
+                <p>Error: {error}</p>
+            )}
+            {/* {getData && (
+                <pre>
+                    {JSON.stringify(
+                        getData,
+                        null,
+                        2
+                    )}
+                </pre>
+            )} */}
         </div>
     );
 }
