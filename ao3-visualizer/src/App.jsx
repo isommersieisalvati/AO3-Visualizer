@@ -1,6 +1,7 @@
 import React, {
     useState,
     useEffect,
+    useRef,
 } from "react";
 import UrlInput from "./components/UrlInput";
 import Heatmap from "./components/Heatmap";
@@ -10,17 +11,22 @@ import axios from "axios";
 function App() {
     const [data, setData] =
         useState(null);
+    const dataRef = useRef(data);
+
+    let response;
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response =
-                    await axios
-                        .get(
-                            "http://localhost:3001/work-list"
-                        )
-                        .then();
+                response = await axios
+                    .get(
+                        "http://localhost:3001/work-list"
+                    )
+                    .then();
                 setData(response.data);
+                console.log(
+                    dataRef.current
+                );
             } catch (error) {
                 console.error(
                     "Error fetching data:",
@@ -30,7 +36,7 @@ function App() {
         };
 
         fetchData();
-    }, [data]);
+    }, [dataRef]);
 
     console.log("worklist", data);
 
@@ -38,7 +44,8 @@ function App() {
         <div className="App">
             <h1>URL Fetcher</h1>
             <UrlInput />
-            <Heatmap list={data} />
+
+            {/* <Heatmap list={data} /> */}
         </div>
     );
 }
