@@ -1,15 +1,15 @@
 import React from "react";
 
-const Heatmap = (list) => {
-    return (
-        <div>
-            {JSON.stringify(
-                list,
-                null,
-                2
-            )}
-        </div>
+const Heatmap = (workList) => {
+    const works =
+        Object.values(workList)[0];
+
+    const dates = works.map(
+        (work) => work[1]
     );
+
+    console.log(dates);
+    return <div>Heatmap:</div>;
 };
 
 export default Heatmap;

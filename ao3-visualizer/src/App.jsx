@@ -34,8 +34,6 @@ function App() {
         }
     };
 
-    console.log(list);
-
     return (
         <div>
             <form
@@ -59,18 +57,23 @@ function App() {
             {error && (
                 <p>Error: {error}</p>
             )}
-            {/* <Heatmap list={list} /> */}
             {list && (
                 <div>
                     <Heatmap
-                        list={list}
+                        workList={
+                            list.data
+                        }
                     />
-                    <Voronoi
-                        list={list}
+                    {/* <Voronoi
+                        works={
+                            list.data
+                        }
                     />
                     <Boxplot
-                        list={list}
-                    />
+                        works={
+                            list.data
+                        }
+                    /> */}
                 </div>
             )}
         </div>

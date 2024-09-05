@@ -19,6 +19,7 @@ app.post(
             // Fetch data from frontend API
             const url = req.body.url;
             currentUrl = url;
+            console.log(currentUrl);
             data = await getStatistics(
                 currentUrl
             );
