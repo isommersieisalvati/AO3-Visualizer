@@ -4,13 +4,15 @@ import React, {
     useRef,
 } from "react";
 // import UrlInput from "./components/UrlInput";
-// import Heatmap from "./components/Heatmap";
+import Heatmap from "./components/Heatmap";
+import Boxplot from "./components/Boxplot";
+import Voronoi from "./components/Voronoi";
 import "./App.css";
 import axios from "axios";
 
 function App() {
     const [url, setUrl] = useState(""); // Data to send with POST
-    const [getList, setGetList] =
+    const [list, setList] =
         useState(null); // Data to display after GET
     const [error, setError] =
         useState(null); // Error handling
@@ -25,20 +27,14 @@ function App() {
                     "http://localhost:3001/work-page-url",
                     { url }
                 );
-            console.log(
-                "POST Response:",
-                postResponse.data
-            );
 
-            setGetList(
-                postResponse.data
-            );
+            setList(postResponse.data);
         } catch (err) {
             setError(err.message); // Handle errors
         }
     };
 
-    console.log(getList);
+    console.log(list);
 
     return (
         <div>
@@ -63,15 +59,20 @@ function App() {
             {error && (
                 <p>Error: {error}</p>
             )}
-            {/* {getData && (
-                <pre>
-                    {JSON.stringify(
-                        getData,
-                        null,
-                        2
-                    )}
-                </pre>
-            )} */}
+            {/* <Heatmap list={list} /> */}
+            {list && (
+                <div>
+                    <Heatmap
+                        list={list}
+                    />
+                    <Voronoi
+                        list={list}
+                    />
+                    <Boxplot
+                        list={list}
+                    />
+                </div>
+            )}
         </div>
     );
 }
