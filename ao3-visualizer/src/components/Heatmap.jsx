@@ -3,6 +3,7 @@ import React, {
     useEffect,
 } from "react";
 import * as d3 from "d3";
+import { processDates } from "../utils/conversion";
 
 const Heatmap = (workList) => {
     const works =
@@ -14,28 +15,7 @@ const Heatmap = (workList) => {
         (work) => work[1]
     );
 
-    const data = [
-        {
-            month: "Jan",
-            year: 2023,
-            count: 2,
-        },
-        {
-            month: "Feb",
-            year: 2023,
-            count: 1,
-        },
-        {
-            month: "Mar",
-            year: 2024,
-            count: 1,
-        },
-        {
-            month: "Jan",
-            year: 2024,
-            count: 1,
-        },
-    ];
+    const data = processDates(dates);
 
     useEffect(() => {
         const months = [
@@ -56,22 +36,20 @@ const Heatmap = (workList) => {
             new Set(
                 data.map((d) => d.year)
             )
-        ); // Extract unique years
+        );
 
         const margin = {
             top: 20,
             right: 20,
-            bottom: 30,
-            left: 40,
+            bottom: 20,
+            left: 20,
         };
+        const gridWidth = 50;
+        const gridHeight = 50;
         const width =
-            600 -
-            margin.left -
-            margin.right;
+            gridWidth * months.length;
         const height =
-            400 -
-            margin.top -
-            margin.bottom;
+            gridHeight * years.length;
 
         const svg = d3
             .select(svgRef.current)
@@ -140,6 +118,8 @@ const Heatmap = (workList) => {
                 "height",
                 yScale.bandwidth()
             )
+            .attr("width", gridWidth) // Ensure uniform grid width
+            .attr("height", gridHeight) // Ensure uniform grid height
             .style("fill", (d) =>
                 colorScale(d.count)
             );
@@ -160,7 +140,6 @@ const Heatmap = (workList) => {
 
     return (
         <div>
-            Heatmap:
             <svg ref={svgRef}></svg>
         </div>
     );
