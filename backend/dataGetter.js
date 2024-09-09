@@ -48,13 +48,22 @@ function getFicInfo(work) {
     const datetime = work.querySelector(
         "p.datetime"
     ).textContent;
-    const fandoms =
+    const fandomTag =
+        work.querySelectorAll(
+            "h5.fandoms.heading > a.tag"
+        );
+    const fandoms = Array.from(
+        fandomTag
+    ).map((tag) => tag.textContent);
+
+    const kudos =
         work.querySelector(
-            "a.tag"
-        ).textContent;
-    const kudos = work.querySelector(
-        "dd.kudos a"
-    ).textContent;
+            "dd.kudos a"
+        ) == undefined
+            ? "0"
+            : work.querySelector(
+                  "dd.kudos a"
+              ).textContent;
 
     return [
         title,
@@ -97,6 +106,10 @@ export async function getStatistics(
                 }
             );
         }
+        // const fandoms = works.map(
+        //     (work) => work[2]
+        // );
+        console.log(works);
         return works;
     } catch (error) {
         console.error(
