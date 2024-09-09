@@ -106,10 +106,7 @@ export async function getStatistics(
                 }
             );
         }
-        // const fandoms = works.map(
-        //     (work) => work[2]
-        // );
-        console.log(works);
+
         return works;
     } catch (error) {
         console.error(

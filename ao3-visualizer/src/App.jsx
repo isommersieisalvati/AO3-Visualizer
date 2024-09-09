@@ -64,12 +64,12 @@ function App() {
                             list.data
                         }
                     />
-                    {/* <Voronoi
-                        works={
+                    <Voronoi
+                        workList={
                             list.data
                         }
                     />
-                    <Boxplot
+                    {/* <Boxplot
                         works={
                             list.data
                         }
