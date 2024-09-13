@@ -1,7 +1,15 @@
 import React from "react";
 
-const Boxplot = (list) => {
-    return <div>Boxplot</div>;
+const Boxplot = (workList) => {
+    const works =
+        Object.values(workList)[0];
+
+    const kudos = works.map(
+        (work) => work[3]
+    );
+
+    console.log(kudos);
+    return <div>{kudos}</div>;
 };
 
 export default Boxplot;

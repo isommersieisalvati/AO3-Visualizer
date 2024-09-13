@@ -3,24 +3,15 @@ import React, {
     useEffect,
 } from "react";
 import * as d3 from "d3";
+import { reduceToFandoms } from "../utils/conversion";
 
 const Voronoi = (workList) => {
     const works =
         Object.values(workList)[0];
 
-    const fandoms = works
-        .map((work) => work[2])
-        .flat();
-
     // Create a dictionary to count the occurrences of each item
-    const fandomCount = fandoms.reduce(
-        (acc, item) => {
-            acc[item] =
-                (acc[item] || 0) + 1;
-            return acc;
-        },
-        {}
-    );
+    const fandomCount =
+        reduceToFandoms(works);
 
     console.log(fandomCount);
 

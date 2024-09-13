@@ -59,21 +59,21 @@ function App() {
             )}
             {list && (
                 <div>
-                    <Heatmap
+                    {/* <Heatmap
                         workList={
-                            list.data
-                        }
-                    />
-                    <Voronoi
-                        workList={
-                            list.data
-                        }
-                    />
-                    {/* <Boxplot
-                        works={
                             list.data
                         }
                     /> */}
+                    {/* <Voronoi
+                        workList={
+                            list.data
+                        }
+                    /> */}
+                    <Boxplot
+                        workList={
+                            list.data
+                        }
+                    />
                 </div>
             )}
         </div>
