@@ -54,3 +54,28 @@ export const reduceToFandoms = (
 
     return fandomCount;
 };
+
+export const checkFandom = (work) => {
+    const fandom = new Set(
+        work[2].flat()
+    );
+    return (
+        [...fandom].filter((value) =>
+            boxplotFandom.has(value)
+        ).length > 0
+    );
+};
+
+export const boxplotCaculator = (
+    works,
+    fandoms
+) => {
+    works_updated = works.map(
+        (work) => [
+            work[0], // First item
+            ...work.slice(2), // All items after the second
+        ]
+    );
+
+    fandoms.map((fandom) => {});
+};

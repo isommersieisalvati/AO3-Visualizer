@@ -3,7 +3,6 @@ import React, {
     useEffect,
     useRef,
 } from "react";
-// import UrlInput from "./components/UrlInput";
 import Heatmap from "./components/Heatmap";
 import Boxplot from "./components/Boxplot";
 import Voronoi from "./components/Voronoi";
@@ -21,7 +20,6 @@ function App() {
         e.preventDefault();
 
         try {
-            // Step 1: Send data with POST request
             const postResponse =
                 await axios.post(
                     "http://localhost:3001/work-page-url",
@@ -36,10 +34,13 @@ function App() {
 
     return (
         <div>
+            <h1>AO3 Visualizer</h1>
             <form
+                class="url"
                 onSubmit={handleSubmit}
             >
                 <input
+                    class="urlInput"
                     type="text"
                     value={url}
                     onChange={(e) =>
@@ -48,10 +49,14 @@ function App() {
                                 .value
                         )
                     }
-                    placeholder="Enter data"
+                    placeholder="Enter your work page url (like archiveofourown.org/users/Ilsistemaperiodico/yourusername/works):"
                 />
-                <button type="submit">
-                    Submit
+                <button
+                    class="submit"
+                    type="submit"
+                >
+                    View your works in
+                    graphs!
                 </button>
             </form>
             {error && (
@@ -59,21 +64,21 @@ function App() {
             )}
             {list && (
                 <div>
-                    {/* <Heatmap
-                        workList={
-                            list.data
-                        }
-                    /> */}
-                    {/* <Voronoi
-                        workList={
-                            list.data
-                        }
-                    /> */}
-                    <Boxplot
+                    <Heatmap
                         workList={
                             list.data
                         }
                     />
+                    <Voronoi
+                        workList={
+                            list.data
+                        }
+                    />
+                    {/* <Boxplot
+                        workList={
+                            list.data
+                        }
+                    /> */}
                 </div>
             )}
         </div>

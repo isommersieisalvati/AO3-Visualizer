@@ -1,5 +1,9 @@
 import React from "react";
-import { reduceToFandoms } from "../utils/conversion";
+import {
+    reduceToFandoms,
+    boxplotCaculator,
+    checkFandom,
+} from "../utils/conversion";
 
 const Boxplot = (workList) => {
     const works =
@@ -15,28 +19,23 @@ const Boxplot = (workList) => {
             valueB - valueA
     );
 
-    const boxplotFandom = Object.values(
-        fandomsDesc
-            .slice(0, 5)
-            .map(([key]) => key)
+    const boxplotFandom = new Seet(
+        Object.values(
+            fandomsDesc
+                .slice(0, 5)
+                .map(([key]) => key)
+        )
     );
-
-    const checkFandom = (work) => {
-        const fandoms = work[2].flat();
-        let set1 = new Set(fandoms);
-        let set2 = new Set(
-            boxplotFandom
-        );
-
-        return (
-            [...set1].filter((value) =>
-                set2.has(value)
-            ).length > 0
-        );
-    };
 
     const boxplotWorks = works.filter(
         checkFandom
+    );
+
+    console.log(
+        boxplotCaculator(
+            boxplotWorks,
+            boxplotFandom
+        )
     );
 
     return <div>Boxplot</div>;
