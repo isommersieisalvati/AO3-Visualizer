@@ -4,6 +4,7 @@ import React, {
 } from "react";
 import * as d3 from "d3";
 import { reduceToFandoms } from "../utils/conversion";
+import "./Voronoi.css";
 
 const Voronoi = (workList) => {
     const works =
@@ -13,11 +14,16 @@ const Voronoi = (workList) => {
     const fandomCount =
         reduceToFandoms(works);
 
-    console.log(fandomCount);
+    const largestFandom = Object.keys(
+        fandomCount
+    ).reduce((a, b) =>
+        fandomCount[a] > fandomCount[b]
+            ? a
+            : b
+    );
 
     const svgRef = useRef();
     useEffect(() => {
-        // Convert dictionary to array of points with random coordinates
         const points = Object.keys(
             fandomCount
         ).map((key, index) => ({
@@ -29,7 +35,7 @@ const Voronoi = (workList) => {
                         fandomCount
                     ).length) *
                 Math.PI *
-                2, // Spread points evenly in circular space
+                2,
         }));
 
         const width = 500;
@@ -181,8 +187,22 @@ const Voronoi = (workList) => {
     }, [fandomCount]);
 
     return (
-        <div>
-            <svg ref={svgRef}></svg>
+        <div className="voronoi">
+            <div className="text">
+                You created{" "}
+                {
+                    fandomCount[
+                        largestFandom
+                    ]
+                }{" "}
+                fanworks for{" "}
+                {largestFandom} in
+                total, and you really
+                love this fandom!
+            </div>
+            <div className="graph">
+                <svg ref={svgRef}></svg>
+            </div>
         </div>
     );
 };

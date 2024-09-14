@@ -4,6 +4,7 @@ import React, {
 } from "react";
 import * as d3 from "d3";
 import { processDates } from "../utils/conversion";
+import "./Heatmap.css";
 
 const Heatmap = (workList) => {
     const works =
@@ -16,6 +17,13 @@ const Heatmap = (workList) => {
     );
 
     const data = processDates(dates);
+    const highest = data.reduce(
+        (max, item) =>
+            item.count > max.count
+                ? item
+                : max,
+        data[0]
+    );
 
     useEffect(() => {
         const months = [
@@ -139,8 +147,17 @@ const Heatmap = (workList) => {
     }, [data]);
 
     return (
-        <div>
-            <svg ref={svgRef}></svg>
+        <div class="heatmap">
+            <div class="graph">
+                <svg ref={svgRef}></svg>
+            </div>
+            <div class="text">
+                In {highest.month}{" "}
+                {highest.year} you
+                created {highest.count}{" "}
+                fanworks! What a
+                productive month!
+            </div>
         </div>
     );
 };

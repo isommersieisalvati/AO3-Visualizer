@@ -1,0 +1,18 @@
+div.voronoi {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    max-width: 1000px;
+    justify-content: space-between;
+}
+
+.graph,
+.text {
+    flex: 1; /* Makes the divs take up equal space */
+    margin: 10px; /* Adds some space around each div */
+    padding: 20px; /* Adds padding inside the divs */
+    border: 1px solid #ccc; /* Adds a border to visualize the divs */
+}
