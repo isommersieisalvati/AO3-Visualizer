@@ -3,6 +3,7 @@ import {
     reduceToFandoms,
     boxplotCaculator,
 } from "../utils/conversion";
+import * as d3 from "d3";
 
 const Boxplot = (workList) => {
     const works =

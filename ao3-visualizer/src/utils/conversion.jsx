@@ -1,3 +1,5 @@
+import * as d3 from "d3";
+
 export const processDates = (
     dateList
 ) => {
@@ -64,16 +66,49 @@ export const boxplotCaculator = (
             if (fandom in fandoms) {
                 if (fandom in kudos) {
                     kudos[fandom].push(
-                        work[3]
+                        Number(work[3])
                     );
                 } else {
-                    console.log(fandom);
                     kudos[fandom] = [
-                        work[3],
+                        Number(work[3]),
                     ];
                 }
             }
         }
     }
-    return kudos;
+
+    let data = [];
+
+    for (let fandom in kudos) {
+        const sortedKudos = kudos[
+            fandom
+        ]
+            .slice()
+            .sort(d3.ascending);
+        console.log(sortedKudos);
+        data.push({
+            category: fandom,
+            values: [
+                d3.min(sortedKudos),
+                d3.quantile(
+                    sortedKudos,
+                    0.25
+                ),
+                d3.quantile(
+                    sortedKudos,
+                    0.5
+                ),
+                d3.quantile(
+                    sortedKudos,
+                    0.75
+                ),
+                Number(
+                    d3.max(sortedKudos)
+                ),
+                null,
+            ],
+        });
+    }
+
+    return data;
 };
