@@ -21,7 +21,13 @@ const Boxplot = (workList) => {
             )
         );
 
-    console.log(boxplotFandoms);
+    const kudosBoxplot =
+        boxplotCaculator(
+            works,
+            boxplotFandoms
+        );
+
+    console.log(kudosBoxplot);
 
     return (
         <div>

@@ -51,16 +51,6 @@ export const reduceToFandoms = (
         {}
     );
 
-    // let largeFandoms =
-    //     Object.fromEntries(
-    //         Object.entries(
-    //             fandomCount
-    //         ).filter(
-    //             ([key, value]) =>
-    //                 value >= 10
-    //         )
-    //     );
-
     return fandomCount;
 };
 
@@ -68,12 +58,22 @@ export const boxplotCaculator = (
     works,
     fandoms
 ) => {
-    works_updated = works.map(
-        (work) => [
-            work[0], // First item
-            ...work.slice(2), // All items after the second
-        ]
-    );
-
-    fandoms.map((fandom) => {});
+    const kudos = {};
+    for (let work of works) {
+        for (let fandom of work[2]) {
+            if (fandom in fandoms) {
+                if (fandom in kudos) {
+                    kudos[fandom].push(
+                        work[3]
+                    );
+                } else {
+                    console.log(fandom);
+                    kudos[fandom] = [
+                        work[3],
+                    ];
+                }
+            }
+        }
+    }
+    return kudos;
 };
