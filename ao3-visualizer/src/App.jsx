@@ -10,11 +10,11 @@ import "./App.css";
 import axios from "axios";
 
 function App() {
-    const [url, setUrl] = useState(""); // Data to send with POST
+    const [url, setUrl] = useState("");
     const [list, setList] =
-        useState(null); // Data to display after GET
+        useState(null);
     const [error, setError] =
-        useState(null); // Error handling
+        useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -36,11 +36,11 @@ function App() {
         <div>
             <h1>AO3 Visualizer</h1>
             <form
-                class="url"
+                className="url"
                 onSubmit={handleSubmit}
             >
                 <input
-                    class="urlInput"
+                    className="urlInput"
                     type="text"
                     value={url}
                     onChange={(e) =>
@@ -52,7 +52,7 @@ function App() {
                     placeholder="Enter your work page url (like archiveofourown.org/users/Ilsistemaperiodico/yourusername/works):"
                 />
                 <button
-                    class="submit"
+                    className="submit"
                     type="submit"
                 >
                     View your works in
@@ -74,11 +74,11 @@ function App() {
                             list.data
                         }
                     />
-                    {/* <Boxplot
+                    <Boxplot
                         workList={
                             list.data
                         }
-                    /> */}
+                    />
                 </div>
             )}
         </div>

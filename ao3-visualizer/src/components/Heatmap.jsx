@@ -147,11 +147,11 @@ const Heatmap = (workList) => {
     }, [data]);
 
     return (
-        <div class="heatmap">
-            <div class="graph">
+        <div className="heatmap">
+            <div className="graph">
                 <svg ref={svgRef}></svg>
             </div>
-            <div class="text">
+            <div className="text">
                 In {highest.month}{" "}
                 {highest.year} you
                 created {highest.count}{" "}

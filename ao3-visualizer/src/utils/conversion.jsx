@@ -42,7 +42,6 @@ export const reduceToFandoms = (
         .map((work) => work[2])
         .flat();
 
-    // Create a dictionary to count the occurrences of each item
     const fandomCount = fandoms.reduce(
         (acc, item) => {
             acc[item] =
@@ -52,18 +51,17 @@ export const reduceToFandoms = (
         {}
     );
 
-    return fandomCount;
-};
+    // let largeFandoms =
+    //     Object.fromEntries(
+    //         Object.entries(
+    //             fandomCount
+    //         ).filter(
+    //             ([key, value]) =>
+    //                 value >= 10
+    //         )
+    //     );
 
-export const checkFandom = (work) => {
-    const fandom = new Set(
-        work[2].flat()
-    );
-    return (
-        [...fandom].filter((value) =>
-            boxplotFandom.has(value)
-        ).length > 0
-    );
+    return fandomCount;
 };
 
 export const boxplotCaculator = (

@@ -11,16 +11,12 @@ const Voronoi = (workList) => {
         Object.values(workList)[0];
 
     // Create a dictionary to count the occurrences of each item
-    const fandomCount =
+    let fandomCount =
         reduceToFandoms(works);
 
     const largestFandom = Object.keys(
         fandomCount
-    ).reduce((a, b) =>
-        fandomCount[a] > fandomCount[b]
-            ? a
-            : b
-    );
+    )[0];
 
     const svgRef = useRef();
     useEffect(() => {
