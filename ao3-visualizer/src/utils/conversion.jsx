@@ -60,7 +60,7 @@ export const boxplotCaculator = (
     works,
     fandoms
 ) => {
-    const kudos = {};
+    let kudos = {};
     for (let work of works) {
         for (let fandom of work[2]) {
             if (fandom in fandoms) {
@@ -76,7 +76,6 @@ export const boxplotCaculator = (
             }
         }
     }
-
     let data = [];
 
     for (let fandom in kudos) {
@@ -85,7 +84,6 @@ export const boxplotCaculator = (
         ]
             .slice()
             .sort(d3.ascending);
-        console.log(sortedKudos);
         data.push({
             category: fandom,
             values: [
@@ -102,9 +100,7 @@ export const boxplotCaculator = (
                     sortedKudos,
                     0.75
                 ),
-                Number(
-                    d3.max(sortedKudos)
-                ),
+                d3.max(sortedKudos),
                 null,
             ],
         });
