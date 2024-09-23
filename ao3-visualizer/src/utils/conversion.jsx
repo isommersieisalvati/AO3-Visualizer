@@ -66,16 +66,27 @@ export const boxplotCaculator = (
             if (fandom in fandoms) {
                 if (fandom in kudos) {
                     kudos[fandom].push(
-                        Number(work[3])
+                        Number(
+                            work[3].replace(
+                                /,/g,
+                                ""
+                            )
+                        )
                     );
                 } else {
                     kudos[fandom] = [
-                        Number(work[3]),
+                        Number(
+                            work[3].replace(
+                                /,/g,
+                                ""
+                            )
+                        ),
                     ];
                 }
             }
         }
     }
+
     let data = [];
 
     for (let fandom in kudos) {

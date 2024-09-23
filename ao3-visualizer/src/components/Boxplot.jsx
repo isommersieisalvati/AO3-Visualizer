@@ -22,7 +22,7 @@ const Boxplot = (workList) => {
                 fandoms
             ).filter(
                 ([key, value]) =>
-                    value >= 10
+                    value >= 15
             )
         );
 
@@ -32,42 +32,44 @@ const Boxplot = (workList) => {
     );
 
     useEffect(() => {
-        const width = 500;
-        const height = 400;
+        const fixedBoxplotWidth =
+            Math.min(
+                80,
+                500 / data.length
+            );
+        const paddingBetweenGroups = 20; // Padding between each group
+        const numGroups = data.length;
+
         const margin = {
             top: 20,
             right: 30,
-            bottom: 40,
+            bottom: 100,
             left: 50,
         };
+        const height = 400;
+        const totalWidth =
+            numGroups *
+                (fixedBoxplotWidth +
+                    paddingBetweenGroups) +
+            margin.left +
+            margin.right;
 
-        // Clear the SVG
+        // Clear the SVG to ensure no overlap
         d3.select(svgRef.current)
             .selectAll("*")
             .remove();
 
-        // Create an SVG container
         const svg = d3
             .select(svgRef.current)
-            .attr(
-                "width",
-                width +
-                    margin.left +
-                    margin.right
-            )
-            .attr(
-                "height",
-                height +
-                    margin.top +
-                    margin.bottom
-            )
+            .attr("width", totalWidth)
+            .attr("height", height)
             .append("g")
             .attr(
                 "transform",
                 `translate(${margin.left},${margin.top})`
             );
 
-        // Y scale (vertical for the number range)
+        // Y scale (vertical for number range)
         const yScale = d3
             .scaleLinear()
             .domain([
@@ -82,93 +84,185 @@ const Boxplot = (workList) => {
                     )
                 ),
             ])
-            .range([height, 0]); // Values go from bottom (0) to top (max)
+            .range([
+                height - margin.bottom,
+                margin.top,
+            ]);
 
-        // X scale (horizontal for each category)
+        // X scale (horizontal for each category with dynamic spacing)
         const xScale = d3
             .scaleBand()
             .domain(
                 data.map(
                     (d) => d.category
                 )
-            )
-            .range([0, width])
-            .padding(0.2); // Space between the groups
+            ) // Categories
+            .range([
+                0,
+                numGroups *
+                    (fixedBoxplotWidth +
+                        paddingBetweenGroups),
+            ]) // Adjust based on numGroups and fixed width
+            .padding(0.2);
 
-        // Add Y axis (on the left with numbers)
+        // Add Y axis
         svg.append("g").call(
             d3.axisLeft(yScale)
         );
 
-        // Add X axis (on the bottom with category names)
-        svg.append("g")
+        // Add X axis
+        const xAxis = svg
+            .append("g")
             .attr(
                 "transform",
-                `translate(0, ${height})`
-            ) // Move axis to the bottom
+                `translate(0, ${
+                    height -
+                    margin.bottom
+                })`
+            )
             .call(
                 d3.axisBottom(xScale)
             );
 
-        // Loop through each group and draw a boxplot
-        data.forEach((group) => {
-            // Filter out null values for this group
-            const filteredValues =
-                group.values.filter(
-                    (v) => v !== null
+        // Add X axis labels with multi-line support (same text wrapping logic as before)
+        xAxis
+            .selectAll("text")
+            .attr(
+                "text-anchor",
+                "middle"
+            )
+            .each(function (d) {
+                const label =
+                    d3.select(this);
+                const words =
+                    d.split(/\s+/); // Split the label text into words
+                let line = [];
+                let lineNumber = 0;
+                const lineHeight = 1.1; // Line height for tspan elements
+                const y =
+                    label.attr("y");
+                const dy =
+                    parseFloat(
+                        label.attr("dy")
+                    ) || 0;
+                let tspan = label
+                    .text(null)
+                    .append("tspan")
+                    .attr("x", 0)
+                    .attr("y", y)
+                    .attr(
+                        "dy",
+                        `${dy}em`
+                    );
+
+                words.forEach(
+                    (word) => {
+                        line.push(word);
+                        tspan.text(
+                            line.join(
+                                " "
+                            )
+                        );
+                        if (
+                            tspan
+                                .node()
+                                .getComputedTextLength() >
+                            fixedBoxplotWidth *
+                                0.9
+                        ) {
+                            line.pop();
+                            tspan.text(
+                                line.join(
+                                    " "
+                                )
+                            );
+                            line = [
+                                word,
+                            ];
+                            tspan =
+                                label
+                                    .append(
+                                        "tspan"
+                                    )
+                                    .attr(
+                                        "x",
+                                        0
+                                    )
+                                    .attr(
+                                        "y",
+                                        y
+                                    )
+                                    .attr(
+                                        "dy",
+                                        `${
+                                            ++lineNumber *
+                                                lineHeight +
+                                            dy
+                                        }em`
+                                    )
+                                    .text(
+                                        word
+                                    );
+                        }
+                    }
                 );
+            });
 
-            // Calculate quartiles, median, min, and max
-            const q1 = d3.quantile(
-                filteredValues,
-                0.25
-            );
-            const median = d3.quantile(
-                filteredValues,
-                0.5
-            );
-            const q3 = d3.quantile(
-                filteredValues,
-                0.75
-            );
-            const minValue = d3.min(
-                filteredValues
-            );
-            const maxValue = d3.max(
-                filteredValues
-            );
+        const colors = [
+            "#7d84b2",
+            "#DBF4A7",
+            "#D9DBF1",
+            "#8E9DCC",
+            "#F9F9ED",
+        ];
 
-            // X position for this group's boxplot
-            const xPos = xScale(
-                group.category
-            );
+        // Draw the boxplots
+        data.forEach((group, i) => {
+            const [
+                minValue,
+                q1,
+                median,
+                q3,
+                maxValue,
+            ] = group.values;
 
-            // Draw the box (from Q1 to Q3)
+            // X position for this group's boxplot (center it on the category band)
+            const xPos =
+                xScale(group.category) +
+                (xScale.bandwidth() -
+                    fixedBoxplotWidth) /
+                    2;
+
+            // Draw the box (Q1 to Q3)
             svg.append("rect")
                 .attr("x", xPos)
-                .attr("y", yScale(q3)) // Top of the box is at Q3
+                .attr("y", yScale(q3)) // Top of the box
                 .attr(
                     "width",
-                    xScale.bandwidth()
+                    fixedBoxplotWidth
                 )
                 .attr(
                     "height",
                     yScale(q1) -
                         yScale(q3)
-                ) // Height is the difference between Q3 and Q1
+                ) // Height is the difference between Q1 and Q3
                 .attr("stroke", "black")
-                .attr(
+                .style(
                     "fill",
-                    "#69b3a2"
-                );
+                    colors[
+                        i %
+                            colors.length
+                    ]
+                )
+                .attr("opacity", 0.8);
 
-            // Draw median line
+            // Draw the median line
             svg.append("line")
                 .attr("x1", xPos)
                 .attr(
                     "x2",
                     xPos +
-                        xScale.bandwidth()
+                        fixedBoxplotWidth
                 )
                 .attr(
                     "y1",
@@ -183,18 +277,18 @@ const Boxplot = (workList) => {
                     "black"
                 );
 
-            // Draw min line
+            // Draw whiskers (min to Q1 and max to Q3)
             svg.append("line")
                 .attr(
                     "x1",
                     xPos +
-                        xScale.bandwidth() /
+                        fixedBoxplotWidth /
                             2
-                ) // Center it on the box
+                )
                 .attr(
                     "x2",
                     xPos +
-                        xScale.bandwidth() /
+                        fixedBoxplotWidth /
                             2
                 )
                 .attr(
@@ -207,18 +301,17 @@ const Boxplot = (workList) => {
                     "black"
                 );
 
-            // Draw max line
             svg.append("line")
                 .attr(
                     "x1",
                     xPos +
-                        xScale.bandwidth() /
+                        fixedBoxplotWidth /
                             2
                 )
                 .attr(
                     "x2",
                     xPos +
-                        xScale.bandwidth() /
+                        fixedBoxplotWidth /
                             2
                 )
                 .attr(
@@ -230,10 +323,71 @@ const Boxplot = (workList) => {
                     "stroke",
                     "black"
                 );
+
+            // Draw min and max whisker ticks
+            svg.append("line")
+                .attr(
+                    "x1",
+                    xPos +
+                        fixedBoxplotWidth /
+                            2 -
+                        5
+                )
+                .attr(
+                    "x2",
+                    xPos +
+                        fixedBoxplotWidth /
+                            2 +
+                        5
+                )
+                .attr(
+                    "y1",
+                    yScale(minValue)
+                )
+                .attr(
+                    "y2",
+                    yScale(minValue)
+                )
+                .attr(
+                    "stroke",
+                    "black"
+                );
+
+            svg.append("line")
+                .attr(
+                    "x1",
+                    xPos +
+                        fixedBoxplotWidth /
+                            2 -
+                        5
+                )
+                .attr(
+                    "x2",
+                    xPos +
+                        fixedBoxplotWidth /
+                            2 +
+                        5
+                )
+                .attr(
+                    "y1",
+                    yScale(maxValue)
+                )
+                .attr(
+                    "y2",
+                    yScale(maxValue)
+                )
+                .attr(
+                    "stroke",
+                    "black"
+                );
         });
     }, []);
 
-    return <svg ref={svgRef}></svg>;
+    return (
+        <div>
+            <svg ref={svgRef}></svg>
+        </div>
+    );
 };
 
 export default Boxplot;
