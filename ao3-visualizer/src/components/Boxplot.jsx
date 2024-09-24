@@ -31,6 +31,11 @@ const Boxplot = (workList) => {
         boxplotFandoms
     );
 
+    console.log(
+        Object.values(boxplotFandoms)
+            .length
+    );
+
     useEffect(() => {
         const fixedBoxplotWidth =
             Math.min(
@@ -384,9 +389,10 @@ const Boxplot = (workList) => {
     }, []);
 
     return (
-        <div>
+        Object.values(boxplotFandoms)
+            .length > 0 && (
             <svg ref={svgRef}></svg>
-        </div>
+        )
     );
 };
 

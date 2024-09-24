@@ -27,6 +27,7 @@ function App() {
                 );
 
             setList(postResponse.data);
+            await console.log(list);
         } catch (err) {
             setError(err.message); // Handle errors
         }
@@ -64,16 +65,16 @@ function App() {
             )}
             {list && (
                 <div>
-                    {/* <Heatmap
+                    <Heatmap
                         workList={
                             list.data
                         }
-                    /> */}
-                    {/* <Voronoi
+                    />
+                    <Voronoi
                         workList={
                             list.data
                         }
-                    /> */}
+                    />
                     <Boxplot
                         workList={
                             list.data
