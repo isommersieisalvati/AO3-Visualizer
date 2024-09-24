@@ -40,9 +40,10 @@ const Heatmap = (workList) => {
             "Nov",
             "Dec",
         ];
+
         const years = Array.from(
             new Set(
-                data.map((d) => d.year)
+                data.map((d) => +d.year)
             )
         );
 
@@ -50,7 +51,7 @@ const Heatmap = (workList) => {
             top: 20,
             right: 20,
             bottom: 20,
-            left: 20,
+            left: 40,
         };
         const gridWidth = 50;
         const gridHeight = 50;
@@ -111,26 +112,46 @@ const Heatmap = (workList) => {
                     `${d.month}:${d.year}`
             )
             .enter()
-            .append("rect")
-            .attr("x", (d) =>
-                xScale(d.month)
-            )
-            .attr("y", (d) =>
-                yScale(d.year)
-            )
+            // .append("rect")
+            // .attr("x", (d) =>
+            //     xScale(d.month)
+            // )
+            // .attr("y", (d) =>
+            //     yScale(d.year)
+            // )
+            // .attr(
+            //     "width",
+            //     xScale.bandwidth()
+            // )
+            // .attr(
+            //     "height",
+            //     yScale.bandwidth()
+            // )
+            // .attr("width", gridWidth) // Ensure uniform grid width
+            // .attr("height", gridHeight) // Ensure uniform grid height
+            .append("circle")
             .attr(
-                "width",
-                xScale.bandwidth()
-            )
+                "cx",
+                (d) =>
+                    xScale(d.month) +
+                    xScale.bandwidth() /
+                        2
+            ) // Center the circle horizontally
             .attr(
-                "height",
-                yScale.bandwidth()
-            )
-            .attr("width", gridWidth) // Ensure uniform grid width
-            .attr("height", gridHeight) // Ensure uniform grid height
+                "cy",
+                (d) =>
+                    yScale(d.year) +
+                    yScale.bandwidth() /
+                        2
+            ) // Center the circle vertically
+            .attr("r", gridHeight / 2)
             .style("fill", (d) =>
                 colorScale(d.count)
-            );
+            )
+            .attr("stroke", "grey") // Add a border/frame around each cell
+            .attr("stroke-width", 1) // Define border thickness
+            .attr("rx", 10) // Set horizontal corner radius (for round corners)
+            .attr("ry", 10); // Set vertical corner radius (for round corners)
 
         svg.append("g")
             .attr(
@@ -142,7 +163,11 @@ const Heatmap = (workList) => {
             );
 
         svg.append("g").call(
-            d3.axisLeft(yScale)
+            d3
+                .axisLeft(yScale)
+                .tickFormat(
+                    d3.format("d")
+                )
         );
     }, [data]);
 

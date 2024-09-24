@@ -31,11 +31,6 @@ const Boxplot = (workList) => {
         boxplotFandoms
     );
 
-    console.log(
-        Object.values(boxplotFandoms)
-            .length
-    );
-
     useEffect(() => {
         const fixedBoxplotWidth =
             Math.min(
