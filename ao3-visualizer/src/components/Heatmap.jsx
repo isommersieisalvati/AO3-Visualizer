@@ -53,8 +53,12 @@ const Heatmap = (workList) => {
             bottom: 20,
             left: 40,
         };
-        const gridWidth = 50;
-        const gridHeight = 50;
+
+        let gridHeight =
+            years.length > 10 ? 30 : 50;
+
+        let gridWidth = gridHeight;
+
         const width =
             gridWidth * months.length;
         const height =
@@ -75,27 +79,24 @@ const Heatmap = (workList) => {
                     margin.bottom
             )
             .append("g")
+            .style("padding", "36px")
             .attr(
                 "transform",
                 `translate(${margin.left},${margin.top})`
             );
 
-        const xScale = d3
-            .scaleBand()
-            .domain(months)
-            .range([0, width])
-            .padding(0.05);
-
-        const yScale = d3
-            .scaleBand()
-            .domain(years)
-            .range([height, 0])
-            .padding(0.05);
+        svg.selectAll("*").remove();
 
         const colorScale = d3
             .scaleSequential()
             .interpolator(
-                d3.interpolateBlues
+                d3.interpolateRgbBasis([
+                    "#f0f0f0",
+                    "#f2efbb",
+                    "#C5D86D",
+                    "#82AA57",
+                    "#618943",
+                ])
             )
             .domain([
                 0,
@@ -105,70 +106,61 @@ const Heatmap = (workList) => {
                 ),
             ]);
 
-        svg.selectAll()
-            .data(
-                data,
-                (d) =>
-                    `${d.month}:${d.year}`
-            )
-            .enter()
-            // .append("rect")
-            // .attr("x", (d) =>
-            //     xScale(d.month)
-            // )
-            // .attr("y", (d) =>
-            //     yScale(d.year)
-            // )
-            // .attr(
-            //     "width",
-            //     xScale.bandwidth()
-            // )
-            // .attr(
-            //     "height",
-            //     yScale.bandwidth()
-            // )
-            // .attr("width", gridWidth) // Ensure uniform grid width
-            // .attr("height", gridHeight) // Ensure uniform grid height
-            .append("circle")
-            .attr(
-                "cx",
-                (d) =>
-                    xScale(d.month) +
-                    xScale.bandwidth() /
-                        2
-            ) // Center the circle horizontally
-            .attr(
-                "cy",
-                (d) =>
-                    yScale(d.year) +
-                    yScale.bandwidth() /
-                        2
-            ) // Center the circle vertically
-            .attr("r", gridHeight / 2)
-            .style("fill", (d) =>
-                colorScale(d.count)
-            )
-            .attr("stroke", "grey") // Add a border/frame around each cell
-            .attr("stroke-width", 1) // Define border thickness
-            .attr("rx", 10) // Set horizontal corner radius (for round corners)
-            .attr("ry", 10); // Set vertical corner radius (for round corners)
+        let x = d3
+            .scaleBand()
+            .range([0, width])
+            .domain(months)
+            .padding(0.08);
 
         svg.append("g")
             .attr(
                 "transform",
-                `translate(0,${height})`
+                "translate(0," +
+                    height +
+                    ")"
             )
-            .call(
-                d3.axisBottom(xScale)
-            );
+            .call(d3.axisBottom(x))
+            .select(".domain")
+            .remove();
 
-        svg.append("g").call(
-            d3
-                .axisLeft(yScale)
-                .tickFormat(
-                    d3.format("d")
-                )
-        );
+        let y = d3
+            .scaleBand()
+            .range([height, 0])
+            .domain(years)
+            .padding(0.08);
+
+        svg.append("g")
+            .call(d3.axisLeft(y))
+            .select(".domain")
+            .remove();
+
+        svg.selectAll(
+            ".tick line"
+        ).remove();
+
+        svg.selectAll(".cell")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "cell")
+            .attr("x", (d) =>
+                x(d.month)
+            )
+            .attr("y", (d) => y(d.year))
+            .attr(
+                "width",
+                x.bandwidth()
+            )
+            .attr(
+                "height",
+                y.bandwidth()
+            )
+            .attr("rx", "5px")
+            .attr("ry", "5px")
+            .style("fill", (d) =>
+                colorScale(d.count)
+            )
+            .attr("opacity", 0.75);
     }, [data]);
 
     return (

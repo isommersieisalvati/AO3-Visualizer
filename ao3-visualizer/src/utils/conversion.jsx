@@ -16,6 +16,29 @@ export const processDates = (
 
     const counts = {};
 
+    const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ];
+
+    const years = [
+        ...new Set(
+            convertedList.map(
+                (date) => date.year
+            )
+        ),
+    ];
+
     convertedList.forEach(
         ({ month, year }) => {
             const key = `${month}-${year}`;
@@ -23,6 +46,21 @@ export const processDates = (
                 (counts[key] || 0) + 1;
         }
     );
+
+    years.map((year) => {
+        months.map((month) => {
+            if (
+                !(
+                    `${month}-${year}` in
+                    counts
+                )
+            ) {
+                counts[
+                    `${month}-${year}`
+                ] = 0;
+            }
+        });
+    });
 
     return Object.entries(counts).map(
         ([key, count]) => {
