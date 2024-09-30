@@ -14,5 +14,4 @@ div.voronoi {
     flex: 1; /* Makes the divs take up equal space */
     margin: 10px; /* Adds some space around each div */
     padding: 20px; /* Adds padding inside the divs */
-    border: 1px solid #ccc; /* Adds a border to visualize the divs */
 }

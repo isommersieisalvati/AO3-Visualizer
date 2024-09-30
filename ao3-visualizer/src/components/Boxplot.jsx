@@ -73,14 +73,10 @@ const Boxplot = (workList) => {
         const yScale = d3
             .scaleLinear()
             .domain([
-                0,
+                1,
                 d3.max(
-                    data.flatMap((d) =>
-                        d.values.filter(
-                            (v) =>
-                                v !==
-                                null
-                        )
+                    data.flatMap(
+                        (d) => d.values
                     )
                 ),
             ])
@@ -209,11 +205,12 @@ const Boxplot = (workList) => {
             });
 
         const colors = [
-            "#7d84b2",
-            "#DBF4A7",
-            "#D9DBF1",
-            "#8E9DCC",
-            "#F9F9ED",
+            "#264653",
+            "#2a9d8f",
+            "#e9c46a",
+            "#f4a261",
+            "#e76f51",
+            "#ec8c74",
         ];
 
         // Draw the boxplots
@@ -236,7 +233,9 @@ const Boxplot = (workList) => {
             // Draw the box (Q1 to Q3)
             svg.append("rect")
                 .attr("x", xPos)
-                .attr("y", yScale(q3)) // Top of the box
+                .attr("y", yScale(q3))
+                .attr("rx", 2)
+                .attr("ry", 2)
                 .attr(
                     "width",
                     fixedBoxplotWidth
@@ -381,6 +380,45 @@ const Boxplot = (workList) => {
                     "black"
                 );
         });
+
+        d3.selectAll("rect")
+            .on(
+                "mouseover",
+                (event, d) => {
+                    tooltip
+                        .style(
+                            "opacity",
+                            1
+                        )
+                        .html(
+                            `Median: ${d.median}<br>Q1: ${d.q1}<br>Q3: ${d.q3}`
+                        )
+                        .style(
+                            "left",
+                            `${
+                                event.pageX +
+                                5
+                            }px`
+                        )
+                        .style(
+                            "top",
+                            `${
+                                event.pageY -
+                                5
+                            }px`
+                        );
+                }
+            )
+            .on("mouseout", () =>
+                tooltip.style(
+                    "opacity",
+                    0
+                )
+            );
+
+        svg.selectAll(
+            ".tick line"
+        ).remove();
     }, []);
 
     return (

@@ -10,7 +10,6 @@ const Voronoi = (workList) => {
     const works =
         Object.values(workList)[0];
 
-    // Create a dictionary to count the occurrences of each item
     let fandomCount =
         reduceToFandoms(works);
 
@@ -20,166 +19,142 @@ const Voronoi = (workList) => {
 
     const svgRef = useRef();
     useEffect(() => {
-        const points = Object.keys(
-            fandomCount
-        ).map((key, index) => ({
-            key: key,
-            count: fandomCount[key],
-            angle:
-                (index /
-                    Object.keys(
-                        fandomCount
-                    ).length) *
-                Math.PI *
-                2,
-        }));
+        const data = {
+            name: "root",
+            children: Object.entries(
+                fandomCount
+            ).map((d) => ({
+                name: d[0],
+                value: d[1],
+            })),
+        };
 
-        const width = 500;
-        const height = 500;
-        const radius = width / 2;
+        const width = 400;
+        const height = 400;
 
-        const svg = d3
-            .select(svgRef.current)
-            .attr("width", width)
-            .attr("height", height)
-            .attr("viewBox", [
-                0,
-                0,
-                width,
-                height,
-            ]);
+        const root = d3
+            .hierarchy(data)
+            .sum((d) => d.value)
+            .sort(
+                (a, b) =>
+                    b.value - a.value
+            );
 
-        // Scale the distance from the center based on count
-        const countScale = d3
-            .scaleLinear()
-            .domain([
-                d3.min(
-                    points,
-                    (d) => d.count
-                ),
-                d3.max(
-                    points,
-                    (d) => d.count
-                ),
-            ])
-            .range([
-                radius / 4,
-                radius,
-            ]);
+        const treemapLayout = d3
+            .treemap()
+            .size([width, height]);
 
-        // Adjust x, y coordinates based on count
-        points.forEach((point) => {
-            const r = countScale(
-                point.count
-            ); // Get radius based on count
-            point.x =
-                width / 2 +
-                r *
-                    Math.cos(
-                        point.angle
-                    ); // Polar to Cartesian
-            point.y =
-                height / 2 +
-                r *
-                    Math.sin(
-                        point.angle
-                    ); // Polar to Cartesian
-        });
+        treemapLayout(root); // Apply the layout to the root node
 
-        // Voronoi layout
-        const voronoi =
-            d3.Delaunay.from(
-                points.map((d) => [
-                    d.x,
-                    d.y,
-                ])
-            ).voronoi([
-                0,
-                0,
-                width,
-                height,
-            ]);
+        // Compute the radius of the circular mask
+        const radius =
+            Math.min(width, height) / 2;
 
-        // Clear any existing content
+        // Select the SVG container and clear previous content
+        const svg = d3.select(
+            svgRef.current
+        );
         svg.selectAll("*").remove();
 
-        // Create a circular clipping path
-        svg.append("defs")
-            .append("clipPath")
-            .attr("id", "circle-clip")
-            .append("circle")
-            .attr("cx", width / 2)
-            .attr("cy", height / 2)
-            .attr("r", radius);
-
-        // Group to hold the Voronoi cells
+        // Create a group for the circular boundary
         const g = svg
             .append("g")
             .attr(
-                "clip-path",
-                "url(#circle-clip)"
-            );
-
-        // Draw each cell and clip it to fit inside the circle
-        g.selectAll("path")
-            .data(points)
-            .enter()
-            .append("path")
-            .attr("class", "cell")
-            .attr("d", (d, i) =>
-                voronoi.renderCell(i)
-            )
-            .attr("fill", (d, i) =>
-                d3.interpolateSpectral(
-                    i / points.length
-                )
-            ) // Color based on index
-            .attr("stroke", "#000");
-
-        // Draw the circle boundary
-        svg.append("circle")
-            .attr("cx", width / 2)
-            .attr("cy", height / 2)
-            .attr("r", radius)
-            .attr("fill", "none")
-            .attr("stroke", "#000");
-
-        // Add labels (key and count)
-        const labels = svg
-            .selectAll("g.label")
-            .data(points)
-            .enter()
-            .append("g")
-            .attr("class", "label")
-            .attr(
                 "transform",
-                (d) =>
-                    `translate(${d.x},${d.y})`
+                `translate(${
+                    width / 2
+                },${height / 2})`
             );
 
-        // Add the key (item name) above
-        labels
-            .append("text")
-            .attr("dy", -5)
-            .text((d) => d.key)
-            .attr("font-size", "12px")
-            .attr("fill", "#000")
+        // Define the circular clipping path
+        g.append("clipPath")
             .attr(
-                "text-anchor",
-                "middle"
+                "id",
+                "circular-treemap"
+            )
+            .append("circle")
+            .attr("r", radius)
+            .attr("cx", 0)
+            .attr("cy", 0);
+
+        // Create a group that will be clipped by the circular mask
+        const nodes = g
+            .append("g")
+            .attr(
+                "clip-path",
+                "url(#circular-treemap)"
+            )
+            .selectAll("rect")
+            .data(root.leaves())
+            .enter()
+            .append("rect")
+            .attr(
+                "x",
+                (d) => d.x0 - width / 2
+            ) // Center the treemap
+            .attr(
+                "y",
+                (d) => d.y0 - height / 2
+            )
+            .attr(
+                "width",
+                (d) => d.x1 - d.x0
+            )
+            .attr(
+                "height",
+                (d) => d.y1 - d.y0
+            )
+            .attr(
+                "fill",
+                (d, i) =>
+                    d3.schemeCategory10[
+                        i % 10
+                    ]
             );
 
-        // Add the count number below the key
-        labels
-            .append("text")
-            .attr("dy", 15) // Position count below the key
-            .text((d) => d.count)
-            .attr("font-size", "12px")
-            .attr("fill", "#000")
-            .attr(
-                "text-anchor",
-                "middle"
+        // Add text label for each circle
+        nodes.each((d) => {
+            const node = d3.select(
+                this.parentNode
             );
+            node.append("text")
+                .attr(
+                    "x",
+                    d.x0 -
+                        width / 2 +
+                        (d.x1 - d.x0) /
+                            2
+                )
+                .attr(
+                    "y",
+                    d.y0 -
+                        height / 2 +
+                        (d.y1 - d.y0) /
+                            2
+                )
+                .attr(
+                    "text-anchor",
+                    "middle"
+                )
+                .attr("dy", "0.35em")
+                .text(d.data.name)
+                .style("fill", "white")
+                .style(
+                    "font-size",
+                    Math.min(
+                        (d.x1 - d.x0) /
+                            5,
+                        14
+                    )
+                ); // Adjust font size
+        });
+
+        // Draw the circular boundary
+        g.append("circle")
+            .attr("r", radius)
+            .attr("cx", 0)
+            .attr("cy", 0)
+            .attr("fill", "none");
     }, [fandomCount]);
 
     return (
@@ -196,8 +171,18 @@ const Voronoi = (workList) => {
                 total, and you really
                 love this fandom!
             </div>
-            <div className="graph">
-                <svg ref={svgRef}></svg>
+            <div
+                className="graph"
+                style={{
+                    position:
+                        "relative",
+                }}
+            >
+                <svg
+                    ref={svgRef}
+                    viewBox={`0 0 400 400`}
+                    preserveAspectRatio="xMidYMid meet"
+                ></svg>
             </div>
         </div>
     );

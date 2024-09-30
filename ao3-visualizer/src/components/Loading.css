@@ -1,0 +1,15 @@
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.bouncing {
+    width: 600px;
+    height: 100px;
+}
+
+.text {
+    border: 0px;
+}

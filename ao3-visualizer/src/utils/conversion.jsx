@@ -150,7 +150,6 @@ export const boxplotCaculator = (
                     0.75
                 ),
                 d3.max(sortedKudos),
-                null,
             ],
         });
     }
