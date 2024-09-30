@@ -6,6 +6,7 @@ import React, {
 import Heatmap from "./components/Heatmap";
 import Boxplot from "./components/Boxplot";
 import Voronoi from "./components/Voronoi";
+import Loading from "./components/Loading";
 import "./App.css";
 import axios from "axios";
 
@@ -15,9 +16,12 @@ function App() {
         useState(null);
     const [error, setError] =
         useState(null);
+    const [loading, setLoading] =
+        useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
 
         try {
             const postResponse =
@@ -62,6 +66,10 @@ function App() {
             {error && (
                 <p>Error: {error}</p>
             )}
+
+            {list == null &&
+                loading && <Loading />}
+
             {list && (
                 <div>
                     <Heatmap
@@ -69,11 +77,11 @@ function App() {
                             list.data
                         }
                     />
-                    <Voronoi
+                    {/* <Voronoi
                         workList={
                             list.data
                         }
-                    />
+                    /> */}
                     <Boxplot
                         workList={
                             list.data
