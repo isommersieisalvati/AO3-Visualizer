@@ -53,7 +53,7 @@ const Loading = () => {
                 <circle
                     fill="#00537A"
                     stroke="#00537A"
-                    stroke-width="15"
+                    strokeWidth="15"
                     r="15"
                     cx="160"
                     cy="65"

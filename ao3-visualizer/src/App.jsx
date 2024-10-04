@@ -5,7 +5,7 @@ import React, {
 } from "react";
 import Heatmap from "./components/Heatmap";
 import Boxplot from "./components/Boxplot";
-import Voronoi from "./components/Voronoi";
+import Nightingale from "./components/Nightingale";
 import Loading from "./components/Loading";
 import "./App.css";
 import axios from "axios";
@@ -72,21 +72,21 @@ function App() {
 
             {list && (
                 <div>
-                    <Heatmap
-                        workList={
-                            list.data
-                        }
-                    />
-                    {/* <Voronoi
+                    {/* <Heatmap
                         workList={
                             list.data
                         }
                     /> */}
-                    <Boxplot
+                    <Nightingale
                         workList={
                             list.data
                         }
                     />
+                    {/* <Boxplot
+                        workList={
+                            list.data
+                        }
+                    /> */}
                 </div>
             )}
         </div>
