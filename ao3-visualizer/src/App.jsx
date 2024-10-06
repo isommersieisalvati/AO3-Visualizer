@@ -7,6 +7,7 @@ import Heatmap from "./components/Heatmap";
 import Boxplot from "./components/Boxplot";
 import Nightingale from "./components/Nightingale";
 import Loading from "./components/Loading";
+import Export from "./components/Export";
 import "./App.css";
 import axios from "axios";
 
@@ -53,7 +54,7 @@ function App() {
                                 .value
                         )
                     }
-                    placeholder="Enter your work page url (like archiveofourown.org/users/Ilsistemaperiodico/yourusername/works):"
+                    placeholder="Enter your work page url (like archiveofourown.org/users/yourusername/works):"
                 />
                 <button
                     className="submit"
@@ -71,22 +72,22 @@ function App() {
                 loading && <Loading />}
 
             {list && (
-                <div>
-                    {/* <Heatmap
+                <div className="graph">
+                    <Heatmap
                         workList={
                             list.data
                         }
-                    /> */}
+                    />
                     <Nightingale
                         workList={
                             list.data
                         }
                     />
-                    {/* <Boxplot
+                    <Boxplot
                         workList={
                             list.data
                         }
-                    /> */}
+                    />
                 </div>
             )}
         </div>

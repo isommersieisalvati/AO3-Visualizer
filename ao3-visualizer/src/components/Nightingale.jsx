@@ -63,8 +63,6 @@ const Nightingale = (workList) => {
             .sort(null)
             .value((d) => d.value);
 
-        console.log(formattedData);
-
         const customScale = (value) => {
             return (
                 (radius *
@@ -84,11 +82,11 @@ const Nightingale = (workList) => {
             ); // Use custom scaling function
 
         const pieColors = [
-            "#E19447",
-            "#E5955D",
-            "#E89A73",
-            "#ECA189",
-            "#EFAC9F",
+            "#000000",
+            "#111111",
+            "#222222",
+            "#333333",
+            "#444444",
             "#F3BAB4",
             "#F6CACA",
             "#4D1B0A",
@@ -106,6 +104,11 @@ const Nightingale = (workList) => {
                 )
             )
             .range(pieColors);
+
+        const labels =
+            formattedData.filter(
+                (d) => d.value > 2
+            );
 
         // Bind data to pie chart segments
         const path = svg
@@ -162,11 +165,7 @@ const Nightingale = (workList) => {
                         "relative",
                 }}
             >
-                <svg
-                    ref={svgRef}
-                    // viewBox={`0 0 400 400`}
-                    // preserveAspectRatio="xMidYMid meet"
-                ></svg>
+                <svg ref={svgRef}></svg>
             </div>
         </div>
     );

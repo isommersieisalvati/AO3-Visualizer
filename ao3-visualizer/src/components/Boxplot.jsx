@@ -22,7 +22,7 @@ const Boxplot = (workList) => {
                 fandoms
             ).filter(
                 ([key, value]) =>
-                    value >= 15
+                    value >= 10
             )
         );
 
