@@ -1,43 +1,37 @@
 import React from "react";
-import { toPng } from "html-to-image";
-import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
 
-const Export = ({
-    containerRef,
-    fileName = "dataviz.jpg",
-}) => {
-    const handleExport = () => {
-        if (containerRef.current) {
-            toPng(
-                containerRef.current,
-                { quality: 0.95 }
-            )
-                .then((dataUrl) => {
-                    saveAs(
-                        dataUrl,
-                        fileName
-                    );
-                })
-                .catch((error) => {
-                    console.error(
-                        "Export failed:",
-                        error
-                    );
-                });
-        } else {
-            console.error(
-                "Container ref is not defined"
+const Export = ({ graphRef }) => {
+    const exportGraphs = async () => {
+        if (!graphRef.current) return;
+
+        // Capture the entire container with all graphs
+        const canvas =
+            await html2canvas(
+                graphRef.current
             );
-        }
+
+        // Convert the canvas to an image
+        const image = canvas.toDataURL(
+            "image/png"
+        );
+        const link =
+            document.createElement("a");
+        link.href = image;
+        link.download =
+            "visualization.png";
+        link.click();
     };
 
     return (
-        <button
-            onClick={handleExport}
-            style={{ marginTop: 20 }}
-        >
-            Export as JPG
-        </button>
+        <div>
+            <button
+                onClick={exportGraphs}
+            >
+                Export All as Single
+                Image
+            </button>
+        </div>
     );
 };
 

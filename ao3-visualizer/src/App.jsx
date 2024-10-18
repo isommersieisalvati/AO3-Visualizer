@@ -19,6 +19,7 @@ function App() {
         useState(null);
     const [loading, setLoading] =
         useState(false);
+    const graphRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -72,22 +73,34 @@ function App() {
                 loading && <Loading />}
 
             {list && (
-                <div className="graph">
-                    <Heatmap
-                        workList={
-                            list.data
-                        }
-                    />
-                    <Nightingale
-                        workList={
-                            list.data
-                        }
-                    />
-                    <Boxplot
-                        workList={
-                            list.data
-                        }
-                    />
+                <div>
+                    <div
+                        className="graph"
+                        ref={graphRef}
+                    >
+                        <Heatmap
+                            workList={
+                                list.data
+                            }
+                        />
+                        <Nightingale
+                            workList={
+                                list.data
+                            }
+                        />
+                        <Boxplot
+                            workList={
+                                list.data
+                            }
+                        />
+                    </div>
+                    <div className="export">
+                        <Export
+                            graphRef={
+                                graphRef
+                            }
+                        />
+                    </div>
                 </div>
             )}
         </div>

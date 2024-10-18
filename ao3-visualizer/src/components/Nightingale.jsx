@@ -105,11 +105,6 @@ const Nightingale = (workList) => {
             )
             .range(pieColors);
 
-        const labels =
-            formattedData.filter(
-                (d) => d.value > 2
-            );
-
         // Bind data to pie chart segments
         const path = svg
             .selectAll("path")
@@ -120,6 +115,27 @@ const Nightingale = (workList) => {
             .attr("fill", (d) =>
                 colors(d.data.category)
             );
+
+        // arc.append("text")
+        //     .filter(
+        //         (d) => d.data.value > 3
+        //     ) // Add condition here
+        //     .attr(
+        //         "transform",
+        //         (d) =>
+        //             `translate(${arc.centroid(
+        //                 d
+        //             )})`
+        //     )
+        //     .attr(
+        //         "text-anchor",
+        //         "middle"
+        //     )
+        //     .text(
+        //         (d) => d.data.category
+        //     )
+        //     .style("fill", "white")
+        //     .style("font-size", "12px");
 
         // Add labels
         svg.selectAll("text")
