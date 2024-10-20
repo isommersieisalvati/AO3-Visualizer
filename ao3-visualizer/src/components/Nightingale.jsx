@@ -19,17 +19,16 @@ const Nightingale = (workList) => {
 
     const svgRef = useRef();
     useEffect(() => {
-        const data = fandomCount;
+        const rawData = fandomCount;
 
-        const formattedData =
-            Object.entries(data).map(
-                ([key, value]) => ({
-                    category: key,
-                    value: value,
-                })
-            );
+        const data = Object.entries(
+            rawData
+        ).map(([key, value]) => ({
+            category: key,
+            value: value,
+        }));
 
-        formattedData.sort(
+        data.sort(
             (a, b) => a.value - b.value
         );
 
@@ -75,72 +74,54 @@ const Nightingale = (workList) => {
         const arc = d3
             .arc()
             .innerRadius(0)
-            .outerRadius((d) =>
-                customScale(
-                    d.data.value
-                )
+            .outerRadius(
+                (d) =>
+                    customScale(d.value)
+                // d.value
             ); // Use custom scaling function
 
         const pieColors = [
+            "#FFFFFF",
+            "#DDDDDD",
             "#000000",
-            "#111111",
             "#222222",
-            "#333333",
-            "#444444",
-            "#F3BAB4",
-            "#F6CACA",
-            "#4D1B0A",
-            "#F3BAB4",
-            "#F6CACA",
-            "#4D1B0A",
+            "#3E3232",
+            "#43242C",
         ];
 
         // Create color scale
         const colors = d3
             .scaleOrdinal()
             .domain(
-                formattedData.map(
+                data.map(
                     (d) => d.category
                 )
             )
             .range(pieColors);
 
-        // Bind data to pie chart segments
-        const path = svg
-            .selectAll("path")
-            .data(pie(formattedData))
+        const arcs = svg
+            .selectAll("arc")
+            .data(pie(data))
             .enter()
-            .append("path")
+            .append("g")
+            .attr("class", "arc");
+
+        // Draw slices and set different colors for each slice
+        arcs.append("path")
             .attr("d", arc)
             .attr("fill", (d) =>
                 colors(d.data.category)
-            );
+            ); // Assign a color based on the label
 
-        // arc.append("text")
-        //     .filter(
-        //         (d) => d.data.value > 3
-        //     ) // Add condition here
-        //     .attr(
-        //         "transform",
-        //         (d) =>
-        //             `translate(${arc.centroid(
-        //                 d
-        //             )})`
-        //     )
-        //     .attr(
-        //         "text-anchor",
-        //         "middle"
-        //     )
-        //     .text(
-        //         (d) => d.data.category
-        //     )
-        //     .style("fill", "white")
-        //     .style("font-size", "12px");
+        const angleThreshold =
+            Math.PI / 9; // Set the angle threshold (e.g., 30 degrees)
 
-        // Add labels
-        svg.selectAll("text")
-            .data(pie(formattedData))
-            .enter()
+        arcs.filter(
+            (d) =>
+                d.endAngle -
+                    d.startAngle >
+                angleThreshold
+        )
             .append("text")
             .attr(
                 "transform",
@@ -149,12 +130,10 @@ const Nightingale = (workList) => {
                         d
                     )})`
             )
-            .attr("dy", "0.35em")
-            .style(
+            .attr(
                 "text-anchor",
                 "middle"
             )
-            .style("font-size", "12px")
             .text(
                 (d) => d.data.category
             );
