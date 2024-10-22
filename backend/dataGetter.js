@@ -54,7 +54,12 @@ function getFicInfo(work) {
         );
     const fandoms = Array.from(
         fandomTag
-    ).map((tag) => tag.textContent);
+    ).map(
+        (tag) =>
+            tag.textContent.split(
+                " - "
+            )[0]
+    );
 
     const kudos =
         work.querySelector(

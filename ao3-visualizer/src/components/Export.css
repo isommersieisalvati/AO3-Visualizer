@@ -1,5 +1,10 @@
 div.export {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     justify-content: center;
+    margin: 0 auto;
+    margin-top: 50px;
+    max-width: 1000px;
+    justify-content: space-between;
 }

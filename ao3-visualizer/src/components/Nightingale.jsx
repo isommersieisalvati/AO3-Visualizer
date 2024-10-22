@@ -62,6 +62,7 @@ const Nightingale = (workList) => {
             .sort(null)
             .value((d) => d.value);
 
+        // Create relatively balanced pie slices
         const customScale = (value) => {
             return (
                 (radius *
@@ -74,22 +75,19 @@ const Nightingale = (workList) => {
         const arc = d3
             .arc()
             .innerRadius(0)
-            .outerRadius(
-                (d) =>
-                    customScale(d.value)
-                // d.value
-            ); // Use custom scaling function
+            .outerRadius((d) =>
+                customScale(d.value)
+            );
 
         const pieColors = [
-            "#FFFFFF",
-            "#DDDDDD",
-            "#000000",
-            "#222222",
-            "#3E3232",
-            "#43242C",
+            "#00296b",
+            "#62b6cb",
+            "#c1d3fe",
+            "#b388eb",
+            "#ff6392",
         ];
 
-        // Create color scale
+        // Map categories to the color pallette
         const colors = d3
             .scaleOrdinal()
             .domain(
@@ -111,10 +109,11 @@ const Nightingale = (workList) => {
             .attr("d", arc)
             .attr("fill", (d) =>
                 colors(d.data.category)
-            ); // Assign a color based on the label
+            );
 
+        // The angle threshold to show the text label
         const angleThreshold =
-            Math.PI / 9; // Set the angle threshold (e.g., 30 degrees)
+            Math.PI / 10;
 
         arcs.filter(
             (d) =>
@@ -134,6 +133,7 @@ const Nightingale = (workList) => {
                 "text-anchor",
                 "middle"
             )
+            .style("font-size", "8px")
             .text(
                 (d) => d.data.category
             );
