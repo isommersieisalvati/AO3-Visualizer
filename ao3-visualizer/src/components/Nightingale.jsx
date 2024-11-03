@@ -3,7 +3,10 @@ import React, {
     useEffect,
 } from "react";
 import * as d3 from "d3";
-import { reduceToFandoms } from "../utils/conversion";
+import {
+    reduceToFandoms,
+    lineFandom,
+} from "../utils/conversion";
 import "./Nightingale.css";
 
 const Nightingale = (workList) => {
@@ -16,6 +19,21 @@ const Nightingale = (workList) => {
     const largestFandom = Object.keys(
         fandomCount
     )[0];
+
+    // console.log(typeof fandomCount);
+
+    const linedFandom =
+        Object.fromEntries(
+            Object.entries(
+                fandomCount
+            ).map(([key, value]) => {
+                const newKey =
+                    lineFandom(key); // Modify the key here
+                return [newKey, value]; // Return the new key-value pair
+            })
+        );
+
+    console.log(linedFandom);
 
     const svgRef = useRef();
     useEffect(() => {
@@ -80,22 +98,33 @@ const Nightingale = (workList) => {
             );
 
         const pieColors = [
-            "#00296b",
-            "#62b6cb",
-            "#c1d3fe",
-            "#b388eb",
-            "#ff6392",
+            "#1f77b4", // Blue
+            "#ff7f0e", // Orange
+            "#2ca02c", // Green
+            "#d62728", // Red
+            "#9467bd", // Purple
+            "#8c564b", // Brown
+            "#e377c2", // Pink
+            "#7f7f7f", // Gray
+            "#bcbd22", // Yellow-green
+            "#17becf", // Cyan
         ];
 
         // Map categories to the color pallette
         const colors = d3
-            .scaleOrdinal()
+            .scaleOrdinal(
+                d3.schemeCategory10
+            )
             .domain(
                 data.map(
                     (d) => d.category
                 )
-            )
-            .range(pieColors);
+            );
+        // .range(
+        //     d3.scaleOrdinal(
+        //         d3.schemeCategory8
+        //     )
+        // );
 
         const arcs = svg
             .selectAll("arc")
@@ -114,9 +143,32 @@ const Nightingale = (workList) => {
             .attr("stroke-width", "1px")
             .attr("opacity", 0.8);
 
+        const slice = Object.keys(
+            fandomCount
+        ).length;
+
+        console.log(slice);
+
         // The angle threshold to show the text label
         const angleThreshold =
-            Math.PI / 10;
+            Math.PI / slice;
+
+        const filteredLabels =
+            arcs.filter((d) => {
+                const angleDifference =
+                    d.endAngle -
+                    d.startAngle;
+                return (
+                    angleDifference <
+                    angleThreshold
+                );
+            });
+
+        const labels = Object.values(
+            filteredLabels
+        )[0][0][0];
+
+        console.log(labels);
 
         arcs.filter(
             (d) =>
@@ -138,7 +190,11 @@ const Nightingale = (workList) => {
             )
             .style("font-size", "8px")
             .text(
-                (d) => d.data.category
+                (d) =>
+                    d.data.category +
+                    "\n(" +
+                    d.data.value +
+                    ")"
             );
     }, [fandomCount]);
 
