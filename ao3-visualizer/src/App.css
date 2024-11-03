@@ -71,3 +71,9 @@ button {
         transform: rotate(360deg);
     }
 }
+
+.container {
+    width: 80%;
+    margin: 0 auto; /* Centers the container */
+    /* max-width: 100%; Ensures it doesn’t exceed screen width */
+}

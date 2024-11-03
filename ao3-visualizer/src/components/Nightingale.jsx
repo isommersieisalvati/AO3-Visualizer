@@ -109,7 +109,10 @@ const Nightingale = (workList) => {
             .attr("d", arc)
             .attr("fill", (d) =>
                 colors(d.data.category)
-            );
+            )
+            .attr("stroke", "#778899	")
+            .attr("stroke-width", "1px")
+            .attr("opacity", 0.8);
 
         // The angle threshold to show the text label
         const angleThreshold =

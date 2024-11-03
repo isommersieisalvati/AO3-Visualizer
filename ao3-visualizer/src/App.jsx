@@ -39,7 +39,7 @@ function App() {
     };
 
     return (
-        <div>
+        <div className="container">
             <h1>AO3 Visualizer</h1>
             <form
                 className="url"

@@ -55,7 +55,7 @@ const Heatmap = (workList) => {
         };
 
         let gridHeight =
-            years.length > 10 ? 30 : 50;
+            years.length > 10 ? 30 : 40;
 
         let gridWidth = gridHeight;
 
