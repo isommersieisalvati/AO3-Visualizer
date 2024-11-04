@@ -169,11 +169,16 @@ const Heatmap = (workList) => {
                 <svg ref={svgRef}></svg>
             </div>
             <div className="text">
-                In {highest.month}{" "}
-                {highest.year} you
-                created {highest.count}{" "}
-                fanworks! What a
-                productive month!
+                <p className="month">
+                    In {highest.month}{" "}
+                    {highest.year},
+                </p>
+                <p>
+                    you created{" "}
+                    {highest.count}{" "}
+                    fanworks! What a
+                    productive month!
+                </p>
             </div>
         </div>
     );

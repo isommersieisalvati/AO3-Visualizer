@@ -9,7 +9,12 @@ div.heatmap {
 
 .graph,
 .text {
+    font-size: 20px;
     flex: 1; /* Makes the divs take up equal space */
     margin: 10px; /* Adds some space around each div */
     padding: 20px; /* Adds padding inside the divs */
+}
+
+.month {
+    font-weight: 700;
 }
